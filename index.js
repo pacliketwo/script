@@ -1,8 +1,10 @@
+import "dotenv/config";
 import fs from "fs";
 import { TelegramClient } from "telegram";
 import { StringSession } from "telegram/sessions/index.js";
 import { NewMessage } from "telegram/events/index.js";
 import input from "input";
+import { config } from "dotenv";
 
 // === Настройки ===
 const apiId = 23786159;
@@ -18,7 +20,7 @@ const keywords = [
 ];
 
 // Загружаем сессию, если есть
-let stringSession = "1BAAOMTQ5LjE1NC4xNjcuOTEAUAP/1iTvygR2uwvTNCESiNSmSL7MCFajsk9HqvEy/msnsPnirR8ysEe1xAalv5qAhv4s5XGYngLEtJWZv3BiPbS3pkdqUgc8OWXpHHn6lP4Al13lL2Mqp0es//XKW3cLZhRDR9+y+ytDoxMq5HZI1kIOHxCItSX3jUH0TaQG89FGaI/5Rkjo2wIy70Eqx3TT9JUpEizM25hL0nITN+63UZr2kHMg+8oXOLLa55avHmjBVXu3X3kGyDY8wKAOmnfJvcw8pVX3lW+5rzJi6OE8HfnW9b0yDC2i+OU9utlmNGpdCHuH/lNo53fHVj7C0AtxB3QMHYdwjUWU/sjKCW/+QUA=";
+let stringSession =  process.env.STRING_SESSION || ""; 
 // if (fs.existsSync(sessionFile)) {
 //     stringSession = fs.readFileSync(sessionFile, "utf-8");
 // }
