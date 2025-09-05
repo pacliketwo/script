@@ -21,9 +21,7 @@ const keywords = [
 
 // Загружаем сессию, если есть
 let stringSession =  process.env.STRING_SESSION || ""; 
-// if (fs.existsSync(sessionFile)) {
-//     stringSession = fs.readFileSync(sessionFile, "utf-8");
-// }
+
 const client = new TelegramClient(new StringSession(stringSession), apiId, apiHash, { connectionRetries: 5 });
 
 
