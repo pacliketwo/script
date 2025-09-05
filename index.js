@@ -1,4 +1,4 @@
-import "dotenv/config";
+require('dotenv').config();
 import fs from "fs";
 import { TelegramClient } from "telegram";
 import { StringSession } from "telegram/sessions/index.js";
