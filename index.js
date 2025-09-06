@@ -123,7 +123,7 @@ client.addEventHandler(async (event) => {
             senderName = `[ID:${event.message.senderId}]`;
         }
 
-        const noteText = `[⚡] Ключевое слово найдено в сообщении от ${senderName} в чате ${groupLink}: "${event.message.message}"`;
+        const noteText = `[⚡] Ключевое слово найдено в сообщении от ${senderName}:\n"${event.message.message}"\n🔗 ${messageLink}`;
         console.log(noteText);
         addToGroup(noteText);
 
