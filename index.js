@@ -16,11 +16,11 @@ const keywords = [
     'нужнышш', 'шш', 'шишки', 'шишку', 'шишка', 'шмаль', 'стафчик', 'стафф', 'skero', 'weed',
     'бошки', 'плюшки', 'бух', 'драпчик', 'напас', 'банка', 'хапануть',
     'хапнуть', 'курнуть', 'укуриться',
-  
+
 ];
 
 // Загружаем сессию, если есть
-let stringSession =  process.env.STRING_SESSION || ""; 
+let stringSession = process.env.STRING_SESSION || "";
 
 const client = new TelegramClient(new StringSession(stringSession), apiId, apiHash, { connectionRetries: 5 });
 
@@ -69,12 +69,18 @@ client.addEventHandler(async (event) => {
         if (!message || message.length > 20) return; // фильтр мусора
         if (!keywords.some(word => message.includes(word))) return;
 
-        let groupLink = "[UNKNOWN CHAT]";
+        let messageLink = "[UNKNOWN CHAT]";
         try {
             const chat = await event.message.getChat();
-            if (chat && chat.username) groupLink = `https://t.me/${chat.username}`;
-            else if (chat && chat.title) groupLink = `${chat.title} [PRIVATE GROUP]`;
-            else groupLink = `[ID:${chat.id}]`;
+            if (chat && chat.username) {
+                // Публичная группа или канал
+                messageLink = `https://t.me/${chat.username}/${event.message.id}`;
+            } else if (chat && chat.title) {
+                // Приватная группа — ссылки на сообщение не сделать
+                messageLink = `${chat.title} [PRIVATE GROUP, msgId:${event.message.id}]`;
+            } else {
+                messageLink = `[ID:${chat.id}, msgId:${event.message.id}]`;
+            }
         } catch { }
 
         let senderName = "[UNKNOWN USER]";
