@@ -39,13 +39,13 @@ async function broadcastFromMe() {
       const dialogs = await client.getDialogs();
       const groups = dialogs.filter(d => (d.isGroup || d.isChannel) && d.title !== targetGroupName);
       if (!groups.length) {
-        await sleep(3000); // маленькая задержка, если групп нет
+        await sleep(20000);
         continue;
       }
 
       const lastMessage = (await client.getMessages("me", { limit: 1 }))[0];
       if (!lastMessage) {
-        await sleep(3000);
+        await sleep(20000);
         continue;
       }
 
@@ -53,36 +53,24 @@ async function broadcastFromMe() {
       const group = groups[index % groups.length];
 
       try {
-        // Отправка сообщения
-        const sentMessage = await client.sendMessage(group.id, { message: lastMessage.message || "📎 [Медиа]" });
-        await sendToGroup(logGroupTitle, `✅ Отправлено сообщение в "${group.title}"`);
-
-        // Планируем удаление через 1 час (3600 секунд)
-        setTimeout(async () => {
-          try {
-            await client.deleteMessages(group.id, [sentMessage.id]);
-            console.log(`🗑 Сообщение удалено из "${group.title}"`);
-          } catch (e) {
-            console.error(`Ошибка удаления сообщения из "${group.title}":`, e);
-          }
-        }, 3600 * 1000); // 1 час в миллисекундах
-
+        await client.forwardMessages(group.entity, { messages: [lastMessage.id], fromPeer: "me" });
+        await sendToGroup(logGroupTitle, `✅ Переслано сообщение в "${group.title}"`);
       } catch (e) {
         if (e.errorMessage === "FLOOD" && e.seconds) {
           console.log(`⚠ SlowMode: ждем ${e.seconds} секунд для "${group.title}"`);
           await sleep((e.seconds + 1) * 1000);
           continue;
         } else {
-          await sendToGroup(logGroupTitle, `⚡ Ошибка при отправке в "${group.title}"`);
+          await client.sendMessage(group.id, { message: lastMessage.message || "📎 [Медиа]" });
+          await sendToGroup(logGroupTitle, `⚡ Отправлено как текст в "${group.title}"`);
         }
       }
 
       index++; // следующая группа в следующем цикле
-      await sleep(3 * 60 * 1000); // 3 минуты между рассылками
-
+      await sleep(20000); // 20 секунд между группами
     } catch (err) {
       console.error("Ошибка цикла рассылки:", err);
-      await sleep(3000);
+      await sleep(20000);
     }
   }
 }
