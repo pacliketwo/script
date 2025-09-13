@@ -86,8 +86,25 @@ client.addEventHandler(async (event) => {
       try { chat = await event.message.getChat(); } catch {}
       try { sender = await event.message.getSender(); } catch {}
 
+      let senderName = "[UNKNOWN]";
+      if (sender?.username) {
+        senderName = `@${sender.username}`;
+      } else {
+        try {
+          const fullSender = await client.getEntity(event.message.senderId);
+          if (fullSender?.username) {
+            senderName = `@${fullSender.username}`;
+          } else if (fullSender?.firstName) {
+            senderName = fullSender.firstName + (fullSender.lastName ? " " + fullSender.lastName : "");
+          } else {
+            senderName = `[ID:${fullSender.id}]`;
+          }
+        } catch {
+          senderName = sender?.id ? `[ID:${sender.id}]` : "[UNKNOWN]";
+        }
+      }
+
       const groupName = chat?.title || `[ID:${chat?.id}]`;
-      const senderName = sender?.username ? `@${sender.username}` : sender?.id ? `[ID:${sender?.id}]` : "[UNKNOWN]";
       const msgLink = chat?.username
         ? `https://t.me/${chat.username}/${event.message.id}`
         : `[ID:${chat?.id}, msgId:${event.message.id}]`;
